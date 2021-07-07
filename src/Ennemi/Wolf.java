@@ -1,4 +1,4 @@
 package Ennemi;
 
-public class Orque {
+public class Wolf {
 }

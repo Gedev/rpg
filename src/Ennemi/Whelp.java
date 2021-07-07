@@ -1,4 +1,4 @@
 package Ennemi;
 
-public class Loups {
+public class Whelp {
 }

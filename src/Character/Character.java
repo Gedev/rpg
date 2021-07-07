@@ -1,4 +1,6 @@
-public class Personnage {
+package Character;
+
+public class Character {
 
     // Endurance
     // Force
@@ -7,7 +9,7 @@ public class Personnage {
     private int strength;
     private int hp;
 
-    public Personnage(int stamina, int strength, int hp) {
+    public Character(int stamina, int strength, int hp) {
         this.stamina = stamina;
         this.strength = strength;
         this.hp = hp;
