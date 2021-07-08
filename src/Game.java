@@ -13,27 +13,13 @@ public class Game {
 
         // MENU
         printMenu(sc);
-
-    }
-    public static void printMenu(Scanner sc) {
-
-        System.out.println("__-----_________________{]__________________________________________________");
-        System.out.println("{&&&&&&&#%%&#%&%&%&%&%#%&|]__________________________________________________\\");
-        System.out.println("                        {]");
-
-        System.out.println("Bienvenue dans ce mini-RPG");
-
-        // CHOOSE YOUR NAME
-        System.out.println("Quel est votre pseudo : ");
         String pseudo = sc.nextLine();
 
         // CHOOSE THE RACE
         System.out.println("Choississez votre race : ");
         System.out.println("1. Humain || 2. Elfe || 3. Nain");
-
         int raceChoosed = Integer.parseInt(sc.nextLine());
-
-        createCharacter(raceChoosed, pseudo);
+        Character mainCharacter = createCharacter(raceChoosed, pseudo);
 
         // CHOOSE THE TERRAIN
         System.out.println("Choisissez le terrain que vous désirez explorer : ");
@@ -60,26 +46,46 @@ public class Game {
             }
         }
 
+        do {
+
+        } while (mainCharacter.getHp() >= 0);
+
+    }
+    public static void printMenu(Scanner sc) {
+        System.out.println("__-----_________________{]__________________________________________________");
+        System.out.println("{&&&&&&&#%%&#%&%&%&%&%#%&|]__________________________________________________\\");
+        System.out.println("                        {]");
+
+        System.out.println("Bienvenue dans ce mini-RPG");
+
+        // CHOOSE YOUR NAME
+        System.out.println("Quel est votre pseudo : ");
     }
 
-    public static void createCharacter(int raceChoosed, String pseudo) {
+    public static Character createCharacter(int raceChoosed, String pseudo) {
+        int stamina;
         switch (raceChoosed) {
             case 1 -> {
-                Human mainCharacterHuman = new Human(setStamina(), 10, 10, pseudo);
+                Human mainCharacterHuman = new Human(stamina = setStaminaStrength(), setStaminaStrength(), setHealth(stamina), pseudo);
                 System.out.println("Vous incarnez désormais un humain");
                 printCharacteristics(mainCharacterHuman);
+                return mainCharacterHuman;
             }
             case 2 -> {
-                Elf mainCharacterElf = new Elf(setStamina(), 10, 10, pseudo);
+                Elf mainCharacterElf = new Elf(stamina = setStaminaStrength(), setStaminaStrength(), setHealth(stamina), pseudo);
                 System.out.println("Vous incarnez désormais un elfe");
                 printCharacteristics(mainCharacterElf);
+                System.out.println(mainCharacterElf.getHp());
+                return mainCharacterElf;
             }
             case 3 -> {
-                Dwarf mainCharacterDwarf = new Dwarf(setStamina(), 1, 2, pseudo);
+                Dwarf mainCharacterDwarf = new Dwarf(stamina = setStaminaStrength(),setStaminaStrength(), setHealth(stamina), pseudo);
                 System.out.println("Vous incarnez désormais un nain");
                 printCharacteristics(mainCharacterDwarf);
+                return mainCharacterDwarf;
             }
         }
+        return null;
     }
 
     public static void printCharacteristics(Character mainCharacter) {
@@ -88,10 +94,31 @@ public class Game {
         System.out.println("Strength : " + mainCharacter.getStrength());
     }
 
-    public static int setStamina() {
+    public static int setStaminaStrength() {
         Dice dice = new Dice(6);
         int stamina;
         return stamina = dice.diceRollFourTimes();
+    }
+
+    public static int setHealth(int stamina) {
+        int health = 0;
+        int bonusStamina = applyStatisticsBonus(stamina);
+        health = stamina + bonusStamina;
+        return health;
+    }
+
+    public static int applyStatisticsBonus(int stamina) {
+        int bonus = 0;
+        if(stamina < 5)
+            bonus = -1;
+        else if (stamina < 10)
+            bonus = 0;
+        else if (stamina < 15)
+            bonus = 1;
+        else
+            bonus = 2;
+
+        return bonus;
     }
 
 }
