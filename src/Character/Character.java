@@ -1,6 +1,6 @@
 package Character;
 
-public class Character {
+public abstract class Character {
 
     // Endurance
     // Force
@@ -8,11 +8,16 @@ public class Character {
     private int stamina;
     private int strength;
     private int hp;
+    private int bonusStrength;
+    private int bonusStamina;
 
-    public Character(int stamina, int strength, int hp) {
+    public Character(int stamina, int strength, int hp, int bonusStrength, int bonusStamina) {
         this.stamina = stamina;
         this.strength = strength;
         this.hp = hp;
+        this.bonusStrength = bonusStrength;
+        this.bonusStamina = bonusStamina;
+
     }
 
     public int getStamina() {
@@ -40,15 +45,6 @@ public class Character {
     }
 }
 
-
-// 4 Questions
-
-// - Comment implémenter des classes ? Via l'héritage ou autre chose ? Pourquoi ?
-//    -> Une classe est un type de personnage
-// - Est-ce que "Héros" doit être implémenter ? Quelle est la différence avec un Personnage ? Est-ce qu'un Personnage se divisera entre "Héros" et "Pnj" ?
-// - Comment structurer tout ça ?
-// - Créer une classe pour chaque type de monstre ? Ou plutôt donner le type du monstre en paramètre à l'instanciation d'un ennemi ?
-
 // Personnage -> Héros [Pseudo] -> Humain / Nain
-//               ennemi [Nom] -> Loup / Orque / Ennemi.Dragonnet
+//               Ennemi [Nom] -> Loup / Orque / Ennemi.Dragonnet
 //               Pnj
