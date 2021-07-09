@@ -7,9 +7,9 @@ public abstract class Character {
     // Points de vie
     private int stamina;
     private int strength;
-    private int hp;
-    private int bonusStrength;
-    private int bonusStamina;
+    public int hp;
+    private final int bonusStrength;
+    private final int bonusStamina;
 
     public Character(int stamina, int strength, int hp, int bonusStrength, int bonusStamina) {
         this.stamina = stamina;
@@ -17,7 +17,18 @@ public abstract class Character {
         this.hp = hp;
         this.bonusStrength = bonusStrength;
         this.bonusStamina = bonusStamina;
+    }
 
+    public void attack() {
+
+    }
+
+    public int getBonusStrength() {
+        return bonusStrength;
+    }
+
+    public int getBonusStamina() {
+        return bonusStamina;
     }
 
     public int getStamina() {
