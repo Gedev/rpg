@@ -9,16 +9,18 @@ import Terrain.*;
 import java.util.Random;
 import java.util.Scanner;
 
-import utils.Colors;
+import Utils.Colors;
+import Utils.GameReplies;
 
 
 public class Game {
-    // Regular Colors
-
 
     public static void main(String[] args) {
         Random rand = new Random();
         Scanner sc = new Scanner(System.in);
+
+        int[] frolageDeMort = new int[1];
+        int[] statistics = new int[5];
 
         // MENU
         printMenu(sc);
@@ -55,93 +57,136 @@ public class Game {
             }
         }
 
-        int nbElem = 4, currentXPosition = 0, currentYPosition = 0, currentFloor = 0, maxFloorReached = 0;
+        int nbElem = 10, currentXPosition = 0, currentYPosition = 0, currentFloor = 0, maxFloorReached = 0;
         char input = 'a';
 
         // ITEMS
         String emptyCell = "[  ]", character = "[🧛‍]", ladder = "[ ⬆ ]";
 
-        // Tableau des répliques des collisions contre le mur
-        String[] tabReplyHitWalls = {"Vous vous heurtez au mur.", "Vous vous heurtez à nouveau au mur.", "Peut-être devriez-vous changer de lunettes..", "Qu'est-ce que vous ne comprenez pas dans \"Vous vous heurtez contre le mur ?\""};
+        String[][] grid = new String[nbElem][nbElem];
 
-        // INITIALISATION ÉTAGE
-        int[][] grid = new int[nbElem][nbElem];
-
-        // IMPRESSION GRILLE
-        int i = 0;
-        for (int[] elem : grid) {
-            int j = 0;
-            for (int val : elem) {
-                if (currentXPosition == i && currentYPosition == j)
-                    System.out.print("[🧛‍]");
-                else
-                    System.out.print("[  ]");
-                j++;
-            }
-
-            System.out.println("");
-            i++;
-        }
+        initGrid(grid, currentYPosition, currentXPosition, rand);
 
         System.out.println("q. Aller à Gauche ⬅ | d. Aller à Droite ➡ | z. Aller en haut ⬆ | s. Aller en bas ⬇ | C. Quitter |");
         input = sc.nextLine().charAt(0);
+        int wallhit = 0;
+        boolean victory = true;
 
         // Tant que l'on a pas quitter (appuyer sur C)
         while (input != 'c') {
             switch (input) {
                 case 'q' :
                     if(currentXPosition > 0) {
+                        if(grid[currentYPosition][currentXPosition - 1].equals("[" + Colors.RED.getCodeASCII() + "👹" + Colors.RESET.getCodeASCII() + "]")){
+                            System.out.println("Ma position : " + currentXPosition + ", " + currentYPosition );
+                            System.out.println("grid[currentYPosition][currentXPosition - 1]" + grid[currentYPosition][currentXPosition - 1]);
+                            victory = battle(mainCharacter, rand, frolageDeMort, statistics);
+                        }
                         currentXPosition--;
+                        grid[currentYPosition][currentXPosition+1] = "[  ]";
                     } else {
-                        System.out.println("Impossible d'aller vers la gauche, vous êtes déjà à la limite.");
+                        wallhit++;
+                        printWallHitReplies(wallhit);
                     }
                     break;
                 case 'd' :
                     if(currentXPosition < grid.length-1) {
+                        if(grid[currentYPosition][currentXPosition + 1].equals("[" + Colors.RED.getCodeASCII() + "👹" + Colors.RESET.getCodeASCII() + "]")){
+                            System.out.println("Ma position : " + currentXPosition + ", " + currentYPosition );
+                            System.out.println("grid[currentYPosition][currentXPosition + 1]" + grid[currentYPosition][currentXPosition + 1]);
+                            victory = battle(mainCharacter, rand, frolageDeMort, statistics);
+                        }
                         currentXPosition++;
+                        grid[currentYPosition][currentXPosition-1] = "[  ]";
                     } else {
-                        System.out.println("Impossible d'aller vers la droite, vous êtes déjà à la limite.");
+                        wallhit++;
+                        printWallHitReplies(wallhit);
                     }
                     break;
                 case 'z':
                     if(currentYPosition > 0) {
+                        if(grid[currentYPosition - 1][currentXPosition].equals("[" + Colors.RED.getCodeASCII() + "👹" + Colors.RESET.getCodeASCII() + "]")){
+                            System.out.println("Ma position : " + currentXPosition + ", " + currentYPosition );
+                            System.out.println("grid[currentYPosition - 1][currentXPosition]" + grid[currentYPosition -1 ][currentXPosition]);
+                            victory = battle(mainCharacter, rand, frolageDeMort, statistics);
+                        }
                         currentYPosition--;
+                        grid[currentYPosition+1][currentXPosition] = "[  ]";
                     } else {
-                        System.out.println("Impossible d'aller vers le haut, vous êtes déjà à la limite.");
+                        wallhit++;
+                        printWallHitReplies(wallhit);
                     }
                     break;
                 case 's':
                     if(currentYPosition < grid.length-1) {
+                        if(grid[currentYPosition + 1][currentXPosition].equals("[" + Colors.RED.getCodeASCII() + "👹" + Colors.RESET.getCodeASCII() + "]")){
+                            System.out.println("Ma position : " + currentXPosition + ", " + currentYPosition );
+                            System.out.println("grid[currentYPosition + 1][currentXPosition]" + grid[currentYPosition + 1][currentXPosition]);
+                            victory = battle(mainCharacter, rand, frolageDeMort, statistics);
+                        }
                         currentYPosition++;
+                        grid[currentYPosition-1][currentXPosition] = "[  ]";
                     } else {
-                        System.out.println("Impossible d'aller vers le bas, vous êtes déjà à la limite.");
+                        wallhit++;
+                        printWallHitReplies(wallhit);
                     }
                     break;
                 default: System.out.println("Commande non reconnue.");
             }
+            printGrid(grid, currentYPosition, currentXPosition);
 
-            // LOOP WHILE : IMPRESSION GRILLE
-            i = 0;
-            for (int[] tab1D : grid) {
-                int j = 0;
-                for (int val : tab1D) {
-                    if (currentXPosition == j && currentYPosition == i)
-                        System.out.print("[🧛‍]");
-                    else
-                        System.out.print("[  ]");
-                    j++;
-
-                }
-                System.out.println("");
-                i++;
+            if (victory) {
+                input = sc.nextLine().charAt(0);
+            } else {
+                input = 'c';
             }
-            input = sc.nextLine().charAt(0);
-
 
         }
-        battle(mainCharacter, rand);
     }
 
+    public static void initGrid(String[][] grid, int currentYPosition, int currentXPosition, Random rand) {
+
+        for (int y = 0; y < 10; y++) {
+            for (int x = 0; x < 10; x++) {
+                int nombreAleatoire = rand.nextInt(3);
+
+                if (currentYPosition == y && currentXPosition == x)
+                    grid[y][x] = Colors.PURPLE.getCodeASCII() + "[🧛‍]" + Colors.RESET.getCodeASCII();
+                else if (nombreAleatoire == 1)
+                        grid[y][x] ="[" + Colors.RED.getCodeASCII() + "👹" + Colors.RESET.getCodeASCII() + "]";
+                else
+                    grid[y][x] = "[  ]";
+
+                System.out.print(grid[y][x]);
+            }
+            System.out.print("\n");
+        }
+    }
+
+    public static void printGrid(String[][] grid, int currentYPosition, int currentXPosition) {
+
+        for (int y = 0; y < 10; y++) {
+            for (int x = 0; x < 10; x++) {
+                if (currentYPosition == y && currentXPosition == x)
+                    grid[y][x] = Colors.PURPLE.getCodeASCII() + "[🧛‍]" + Colors.RESET.getCodeASCII();
+
+                System.out.print(grid[y][x]);
+            }
+            System.out.print("\n");
+        }
+    }
+
+    public static void printWallHitReplies(int wallhit) {
+        switch (wallhit) {
+            case 1 -> System.out.println(GameReplies.wallHitReply_1.getReplies());
+            case 2 -> System.out.println(GameReplies.wallHitReply_2.getReplies());
+            case 3 -> System.out.println(GameReplies.wallHitReply_3.getReplies());
+            case 4 -> System.out.println(GameReplies.wallHitReply_4.getReplies());
+            case 8 -> System.out.println(GameReplies.wallHitReply_5.getReplies());
+            case 9 -> System.out.println(GameReplies.wallHitReply_6.getReplies());
+            case 10 -> System.out.println(GameReplies.wallHitReply_7.getReplies());
+        }
+    }
     public static void printMenu(Scanner sc) {
         System.out.println("__-----_________________{]__________________________________________________");
         System.out.println("{&&&&&&&#%%&#%&%&%&%&%#%&|]__________________________________________________\\");
@@ -184,7 +229,7 @@ public class Game {
         System.out.println("Strength : " + mainCharacter.getStrength());
 
         if (mainCharacter.getHp() < 12)
-            System.out.println("Malheureusement, la génétique n'était pas de votre côté." + Colors.YELLOW + "Votre vie est faible." + Colors.RESET);
+            System.out.println("Malheureusement, la génétique n'était pas de votre côté." + Colors.YELLOW.getCodeASCII() + "Votre vie est faible." + Colors.RESET.getCodeASCII());
     }
 
     public static int setStaminaStrength() {
@@ -214,23 +259,18 @@ public class Game {
         return bonus;
     }
 
-    public static void battle(Character mainCharacter, Random rand) {
+    public static boolean battle(Character mainCharacter, Random rand, int[] frolageDeMort, int[] statistics) {
         boolean dead = false;
-        int frolageDeMort = 0;
 
-        // FIGHT LOOP WHILE NOT DEAD
-        do {
             // GENERATE ENNEMI
             Ennemi ennemi = createEnnemi(rand);
-            System.out.println(Colors.RED + "⚔ Vous rencontrez un " + ennemi.name + Colors.BLUE + "  👹 ! ⚔" + Colors.RESET);
+            System.out.println(Colors.RED.getCodeASCII() + "⚔ Vous rencontrez un " + Colors.RESET.getCodeASCII() + ennemi.name + Colors.BLUE.getCodeASCII() + "  👹 ! ⚔" + Colors.RESET.getCodeASCII());
             System.out.println("------------------------------------------------------");
             System.out.println("Force de l'ennemi = " + ennemi.getStrength());
             System.out.println("Bonus Force Héro = " + mainCharacter.getBonusStrength());
 
             int mainCharacterHP = mainCharacter.getHp() + mainCharacter.getBonusStamina();
             int ennemiHP = ennemi.getHp();
-
-
 
             // FIGHT LOOP AGAINST 1 ENNEMI
             do {
@@ -241,29 +281,43 @@ public class Game {
                 // Apply damages
                 mainCharacterHP -= damageDoneByEnnemi;
                 ennemiHP -= damageDoneByHero;
-                System.out.println(Colors.GREEN + "Vous infligez " + Colors.RESET + Colors.RED + damageDoneByHero + Colors.RESET + Colors.GREEN + " dégâts à l'ennemi !" + Colors.RESET);
-                System.out.println("L'ennemi vous inflige \033[41m " + damageDoneByEnnemi + " " + Colors.RESET + " dégâts !");
+                System.out.println(Colors.GREEN.getCodeASCII() + "Vous infligez " + Colors.RESET.getCodeASCII() + Colors.RED.getCodeASCII() + damageDoneByHero + Colors.RESET.getCodeASCII() + Colors.GREEN.getCodeASCII() + " dégâts à l'ennemi !" + Colors.RESET.getCodeASCII());
+                System.out.println("L'ennemi vous inflige \033[41m " + damageDoneByEnnemi + " " + Colors.RESET.getCodeASCII() + " dégâts !");
                 System.out.println("Vie Héro : " + mainCharacterHP + " || Vie ennemi : " + ennemiHP + "\n");
 
             } while (mainCharacterHP >= 1 && ennemiHP > 1);
-            // CHECK IF DEAD
-            if(mainCharacterHP <= 0) {
-                dead = true;
-                System.out.println(Colors.BLACK_BACKGROUND + "☠" + Colors.RESET + Colors.RED + "Vous êtes mort" + Colors.RESET + Colors.BLACK_BACKGROUND + "☠" + Colors.RESET);
-            }
 
             if (mainCharacterHP > 0 && mainCharacterHP <= 3)
-                frolageDeMort++;
+                frolageDeMort[0]++;
 
             System.out.println("------------------------------------------------------");
             System.out.println("------------------------------------------------------");
 
-        }while(!dead);
+        // CHECK IF DEAD
+        if(mainCharacterHP <= 0) {
+            dead = true;
+            System.out.println(Colors.BLACK_BACKGROUND.getCodeASCII() + "☠" + Colors.RESET.getCodeASCII() + Colors.RED.getCodeASCII() + "Vous êtes mort" + Colors.RESET.getCodeASCII() + Colors.BLACK_BACKGROUND.getCodeASCII() + "☠" + Colors.RESET.getCodeASCII());
 
-        // RECAPITALATUF
+            // RECAPITALATUF
+            if (frolageDeMort[0] > 0)
+                System.out.println("Vous avez frôlé la mort " + frolageDeMort[0] + " fois avant de mourir");
 
-        if (frolageDeMort > 0)
-            System.out.println("Vous avez frôlé la mort " + frolageDeMort + " fois avant de mourir");
+            System.out.println("Vous avez vaincu " + statistics[0] + " orcs !");
+            System.out.println("Vous avez vaincu " + statistics[1] + " dragonnets !");
+            System.out.println("Vous avez vaincu " + statistics[2] + " loups !");
+
+            return false;
+        }
+
+        // STATISTICS
+        switch (ennemi.name) {
+            case "orc" -> statistics[0]++;
+            case "whelp" -> statistics[1]++;
+            case "wolf" -> statistics[2]++;
+        }
+
+
+        return true;
     }
 
     public static Ennemi createEnnemi(Random rand) {
