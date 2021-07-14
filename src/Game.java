@@ -9,24 +9,12 @@ import Terrain.*;
 import java.util.Random;
 import java.util.Scanner;
 
+import utils.Colors;
+
 
 public class Game {
     // Regular Colors
-    public static final String RESET = "\033[0m";
 
-    public static final String BLACK = "\033[0;30m";   // BLACK
-    public static final String RED = "\033[0;31m";     // RED
-    public static final String GREEN = "\033[0;32m";   // GREEN
-    public static final String YELLOW = "\033[0;33m";  // YELLOW
-    public static final String BLUE = "\033[0;34m";    // BLUE
-    public static final String PURPLE = "\033[0;35m";  // PURPLE
-    public static final String CYAN = "\033[0;36m";    // CYAN
-    public static final String WHITE = "\033[0;37m";   // WHITE
-
-    public static final String BLACK_BACKGROUND_BRIGHT = "\033[0;100m";// BLACK
-    public static final String BLACK_BACKGROUND = "\033[40m";  // BLACK
-    public static final String RED_BACKGROUND = "\033[41m";    // RED
-    public static final String WHITE_BACKGROUND_BRIGHT = "\033[0;107m";   // WHITE
 
     public static void main(String[] args) {
         Random rand = new Random();
@@ -196,7 +184,7 @@ public class Game {
         System.out.println("Strength : " + mainCharacter.getStrength());
 
         if (mainCharacter.getHp() < 12)
-            System.out.println("Malheureusement, la génétique n'était pas de votre côté. \033[0;33m Votre vie est faible." + RESET);
+            System.out.println("Malheureusement, la génétique n'était pas de votre côté." + Colors.YELLOW + "Votre vie est faible." + Colors.RESET);
     }
 
     public static int setStaminaStrength() {
@@ -234,7 +222,7 @@ public class Game {
         do {
             // GENERATE ENNEMI
             Ennemi ennemi = createEnnemi(rand);
-            System.out.println(RED + "⚔ Vous rencontrez un " + ennemi.name + BLUE + "  👹 ! ⚔" + RESET);
+            System.out.println(Colors.RED + "⚔ Vous rencontrez un " + ennemi.name + Colors.BLUE + "  👹 ! ⚔" + Colors.RESET);
             System.out.println("------------------------------------------------------");
             System.out.println("Force de l'ennemi = " + ennemi.getStrength());
             System.out.println("Bonus Force Héro = " + mainCharacter.getBonusStrength());
@@ -253,15 +241,15 @@ public class Game {
                 // Apply damages
                 mainCharacterHP -= damageDoneByEnnemi;
                 ennemiHP -= damageDoneByHero;
-                System.out.println(GREEN + "Vous infligez " + RESET + RED + damageDoneByHero + RESET + GREEN + " dégâts à l'ennemi !" + RESET);
-                System.out.println("L'ennemi vous inflige \033[41m " + damageDoneByEnnemi + " " + RESET + " dégâts !");
+                System.out.println(Colors.GREEN + "Vous infligez " + Colors.RESET + Colors.RED + damageDoneByHero + Colors.RESET + Colors.GREEN + " dégâts à l'ennemi !" + Colors.RESET);
+                System.out.println("L'ennemi vous inflige \033[41m " + damageDoneByEnnemi + " " + Colors.RESET + " dégâts !");
                 System.out.println("Vie Héro : " + mainCharacterHP + " || Vie ennemi : " + ennemiHP + "\n");
 
             } while (mainCharacterHP >= 1 && ennemiHP > 1);
             // CHECK IF DEAD
             if(mainCharacterHP <= 0) {
                 dead = true;
-                System.out.println(BLACK_BACKGROUND + "☠" + RESET + RED + "Vous êtes mort" + RESET + BLACK_BACKGROUND + "☠" + RESET);
+                System.out.println(Colors.BLACK_BACKGROUND + "☠" + Colors.RESET + Colors.RED + "Vous êtes mort" + Colors.RESET + Colors.BLACK_BACKGROUND + "☠" + Colors.RESET);
             }
 
             if (mainCharacterHP > 0 && mainCharacterHP <= 3)
